@@ -1,0 +1,50 @@
+name: Continuous integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+  NUGET_XMLDOC_MODE: skip
+
+jobs:
+  # NativeAOT cannot cross-compile, so each RID needs its own runner. A build that
+  # is green on `dotnet build` can still fail at AOT publish, which is why publish
+  # runs here rather than only at release.
+  dotnet:
+    name: .NET ${{ matrix.rid }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: ubuntu-latest,    rid: linux-x64 }
+          - { runner: ubuntu-24.04-arm, rid: linux-arm64 }
+          - { runner: windows-latest,   rid: win-x64 }
+          - { runner: windows-11-arm,   rid: win-arm64 }
+          - { runner: macos-13,         rid: osx-x64 }
+          - { runner: macos-latest,     rid: osx-arm64 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Restore (locked)
+        run: dotnet restore --locked-mode
+      - name: Verify formatting
+        run: dotnet format whitespace --no-restore --verify-no-changes
+      - name: Build
+        run: dotnet build -c Release --no-restore
+      - name: Test
+        run: dotnet test -c Release --no-build
+      - name: Publish NativeAOT
+        run: dotnet publish src/strictcommon/strictcommon.csproj -c Release -r ${{ matrix.rid }} --self-contained
+      - name: Vulnerable packages
+        run: dotnet list package --vulnerable --include-transitive
