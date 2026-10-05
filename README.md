@@ -7,7 +7,7 @@ at build time instead of at publish time.
 ## Install and use
 
 ```sh
-dotnet new install ./strict-C#          # from a local checkout
+dotnet new install ./strict-csharp          # from a local checkout
 dotnet new strictcommon -n MyApp
 ```
 
@@ -48,7 +48,7 @@ packages. NativeAOT cannot cross-compile, hence one runner per RID.
 ## Layout
 
 ```text
-content/strict/
+content/strictcommon/
   .template.config/        template definition
   Directory.Build.props    every build setting
   Directory.Build.targets  guards against opting out
