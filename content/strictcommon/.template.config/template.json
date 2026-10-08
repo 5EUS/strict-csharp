@@ -13,12 +13,6 @@
       "valueSource": "name",
       "valueTransform": "safe_namespace",
       "replaces": "StrictCommon"
-    },
-    "ProjectName": {
-      "type": "derived",
-      "valueSource": "name",
-      "valueTransform": "identity",
-      "replaces": "StrictProjectName"
     }
   },
   "tags": {
