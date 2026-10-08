@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 set -eu
-root=$(git rev-parse --show-toplevel)
+root=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$root"
 dotnet format whitespace --no-restore

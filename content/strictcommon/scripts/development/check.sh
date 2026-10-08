@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Everything CI checks, locally. Run before opening a PR.
 set -eu
-root=$(git rev-parse --show-toplevel)
+root=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$root"
 
 dotnet restore --locked-mode

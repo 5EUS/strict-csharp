@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Copy/paste detection with PMD CPD. Needs `pmd` (https://pmd.github.io) on PATH.
 set -eu
-root=$(git rev-parse --show-toplevel)
+root=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$root"
 
 if ! command -v pmd >/dev/null 2>&1; then
