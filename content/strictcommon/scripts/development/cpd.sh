@@ -9,5 +9,9 @@ if ! command -v pmd >/dev/null 2>&1; then
   exit 1
 fi
 
-# Exits non-zero when duplicates of 100+ tokens are found.
-pmd cpd --language cs --minimum-tokens 100 --dir src --dir tests
+# Hand-written sources only: build output (obj/, bin/) holds generated code that
+# is duplicated per configuration. Exits non-zero when 100+ token duplicates are found.
+list=$(mktemp)
+trap 'rm -f "$list"' EXIT
+find src tests \( -name obj -o -name bin \) -prune -o -name '*.cs' -print > "$list"
+pmd cpd --language cs --minimum-tokens 100 --file-list "$list"
